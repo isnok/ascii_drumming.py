@@ -2,7 +2,7 @@
 """ ascii_drummer.py - drum some ascii!
 
 Usage:
-    ascii_drummer.py [-md] [-b=BPM] [PATTERN ...]
+    ascii_drummer.py [-md] [-c=<INT>] [-o=FILE] [-b=BPM] [PATTERN ...]
 
     Where pattern can consits of these 'sounds':
 
@@ -12,12 +12,15 @@ Usage:
         K - kon
         B - both (don+kon)
         r - rim
+        : - sa
 
     everything else is interpreted as a one-tick pause.
 
 Options:
     -b, --bpm=<BPM>         set tempo to BPM beats per minute [default: 90]
+    -o, --output=<FILE>     write song to FILE [default: song.mp3]
     -m, --metronome         insert metronome clicks
+    -c, --click=<INT>       metronome clicks every INT ticks [default: 4]
     -d, --dondokos          insert backbeat dondokos
 
 Examples:
@@ -26,17 +29,47 @@ Examples:
 
 """
 
-from pydub import AudioSegment
+from pydub import AudioSegment, effects
+import os, glob
 
-do = AudioSegment.from_file('my_set/ko.wav', 'wav')
-ko = AudioSegment.from_file('my_set/do.wav', 'wav')
-don = AudioSegment.from_file('my_set/kon.wav', 'wav')
-kon = AudioSegment.from_file('my_set/don.wav', 'wav')
-rim = AudioSegment.from_file('my_set/rim.wav', 'wav') - 12
+def my_sample(name, fmt=None):
+    #print('Searching: %s' % name)
+
+    if fmt is None:
+        fmt = name.split('.')[-1]
+
+    def find_samples(name):
+        return glob.glob(name) + glob.glob('my_set'+os.sep+name)
+
+    restore = os.getcwd()
+    samples = find_samples(name)
+    lastdir = None
+    rel_pos = ''
+
+    while (not samples) and os.getcwd() != lastdir:
+        lastdir = os.getcwd()
+        os.chdir('..')
+        rel_pos += '..' + os.sep
+        #print('Moving: %s -> %s' % (lastdir, os.getcwd()))
+        samples = find_samples(name)
+
+    #print('Got:', samples)
+
+    os.chdir(restore)
+
+    return AudioSegment.from_file(rel_pos + samples[0], fmt)
+
+do =  my_sample('ko.wav')
+ko =  my_sample('do.wav')
+don = my_sample('kon.wav')
+kon = my_sample('don.wav')
+rim = my_sample('rim.wav') - 12
+sa = effects.speedup(my_sample('sa.wav')[300:], playback_speed=3.5) - 12
+#sa = effects.speedup(my_sample('sa.wav')[310:800], playback_speed=3.5) - 12
 
 Don = don.overlay(kon)
 
-click = AudioSegment.from_file('my_set/click.wav', 'wav')
+click = my_sample('click.wav')
 
 char_map = {
     'd': do,
@@ -45,6 +78,7 @@ char_map = {
     'K': kon,
     'B': Don,
     'r': rim,
+    ':': sa,
 }
 
 pause = AudioSegment.silent(duration=0.1)
@@ -74,7 +108,7 @@ if __name__ == '__main__':
     if args['--metronome']:
         beats += METRONOME_EARLY
 
-    DONDOKOS_EARLY = 8
+    DONDOKOS_EARLY = 4
     if args['--dondokos']:
         beats += DONDOKOS_EARLY
 
@@ -87,40 +121,66 @@ if __name__ == '__main__':
 
     # add Metronome
     if args['--metronome']:
+        metronome_interval = int(args['--click'])
+        print('Inserting metronome clicks every %s ticks.' % metronome_interval)
         for cnt, t in enumerate(tick_times):
-            if not (cnt % 4):
+            if not (cnt % metronome_interval):
                 song = song.overlay(click, position=t)
-        tick_times = tick_times[METRONOME_EARLY*4:]
+        tick_times = tick_times[METRONOME_EARLY*metronome_interval:]
 
-
-    dondoko = AudioSegment.silent(duration=4*tick+2)
-    dondoko = dondoko.overlay(don, position=0)
-    dondoko = dondoko.overlay(do, position=2*tick)
-    dondoko = dondoko.overlay(ko, position=3*tick)
-    dondoko = dondoko - 16
-
-    dokodoko = AudioSegment.silent(duration=4*tick+2)
-    dokodoko = dokodoko.overlay(do, position=0)
-    dokodoko = dokodoko.overlay(ko, position=tick)
-    dokodoko = dokodoko.overlay(do, position=2*tick)
-    dokodoko = dokodoko.overlay(ko, position=3*tick)
-    dokodoko = dokodoko - 16
-
-    dokonko = AudioSegment.silent(duration=4*tick+2)
-    dokonko = dokonko.overlay(do, position=0)
-    dokonko = dokonko.overlay(ko, position=tick)
-    dokonko = dokonko.overlay(ko, position=3*tick)
-    dokonko = dokonko - 16
 
     # add dondokos
     if args['--dondokos']:
+        print('Inserting dondokos.')
+        dondoko = AudioSegment.silent(duration=4*tick+2)
+        dondoko = dondoko.overlay(don, position=0)
+        dondoko = dondoko.overlay(do, position=2*tick)
+        dondoko = dondoko.overlay(ko, position=3*tick)
+        dondoko = dondoko - 16
+
         for cnt, t in enumerate(tick_times):
             if not (cnt % 4):
                 song = song.overlay(dondoko, position=t)
         tick_times = tick_times[DONDOKOS_EARLY*4:]
 
+    if not 'implemented':
+        dokodoko = AudioSegment.silent(duration=4*tick+2)
+        dokodoko = dokodoko.overlay(do, position=0)
+        dokodoko = dokodoko.overlay(ko, position=tick)
+        dokodoko = dokodoko.overlay(do, position=2*tick)
+        dokodoko = dokodoko.overlay(ko, position=3*tick)
+        dokodoko = dokodoko - 16
 
-    for t, char in zip(tick_times, pattern):
+        dokonko = AudioSegment.silent(duration=4*tick+2)
+        dokonko = dokonko.overlay(do, position=0)
+        dokonko = dokonko.overlay(ko, position=tick)
+        dokonko = dokonko.overlay(ko, position=3*tick)
+        dokonko = dokonko - 16
+
+
+    print('Playing song:')
+
+    char_accu = ''
+    for cnt, tup in enumerate(zip(tick_times, pattern)):
+
+        t, char = tup
         song = song.overlay(char_map.get(char, pause), position=t)
 
-    song.export('song.mp3', 'mp3')
+        char_accu += char
+        if not (cnt+1) % 8:
+            print(char_accu)
+            char_accu = ''
+
+    if char_accu:
+        print(char_accu)
+
+    song = effects.normalize(song)
+
+    out_file = args['--output']
+
+    if '.' in out_file:
+        out_fmt = out_file.split('.')[-1]
+    else:
+        out_fmt = 'mp3'
+
+    song.export(out_file, out_fmt)
