@@ -2,7 +2,7 @@
 """ ascii_drummer.py - drum some ascii!
 
 Usage:
-    ascii_drummer.py [-m] [-b=BPM] [PATTERN ...]
+    ascii_drummer.py [-md] [-b=BPM] [PATTERN ...]
 
     Where pattern can consits of these 'sounds':
 
@@ -16,8 +16,9 @@ Usage:
     everything else is interpreted as a one-tick pause.
 
 Options:
-    -m, --metronome         insert metronome clicks
     -b, --bpm=<BPM>         set tempo to BPM beats per minute [default: 90]
+    -m, --metronome         insert metronome clicks
+    -d, --dondokos          insert backbeat dondokos
 
 Examples:
     The famous dondoko beat: D.dkD.dkD.dkD.dk ...
@@ -73,6 +74,10 @@ if __name__ == '__main__':
     if args['--metronome']:
         beats += METRONOME_EARLY
 
+    DONDOKOS_EARLY = 8
+    if args['--dondokos']:
+        beats += DONDOKOS_EARLY
+
     ticks = beats * 4
     print('Beats: %d, ticks: %d' % (beats, ticks))
 
@@ -106,6 +111,14 @@ if __name__ == '__main__':
     dokonko = dokonko.overlay(ko, position=tick)
     dokonko = dokonko.overlay(ko, position=3*tick)
     dokonko = dokonko - 16
+
+    # add dondokos
+    if args['--dondokos']:
+        for cnt, t in enumerate(tick_times):
+            if not (cnt % 4):
+                song = song.overlay(dondoko, position=t)
+        tick_times = tick_times[DONDOKOS_EARLY*4:]
+
 
     for t, char in zip(tick_times, pattern):
         song = song.overlay(char_map.get(char, pause), position=t)
