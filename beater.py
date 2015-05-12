@@ -39,6 +39,13 @@ dokodoko = dokodoko.overlay(do, position=2*tick)
 dokodoko = dokodoko.overlay(ko, position=3*tick)
 dokodoko = dokodoko - 16
 
+dokonko = AudioSegment.silent(duration=4*tick+2)
+dokonko = dokonko.overlay(do, position=0)
+dokonko = dokonko.overlay(ko, position=tick)
+dokonko = dokonko.overlay(ko, position=3*tick)
+dokonko = dokonko - 16
+
+
 for cnt, t in enumerate(tick_times[16:32]):
     if not (cnt % 4):
         print(t)
@@ -52,23 +59,11 @@ for cnt, t in enumerate(tick_times[32:48]):
 for cnt, t in enumerate(tick_times[48:64]):
     if not (cnt % 4):
         print(t)
-        song = song.overlay(dondoko, position=t)
+        song = song.overlay(dokonko, position=t)
 
 for cnt, t in enumerate(tick_times[64:]):
     if not (cnt % 4):
         print(t)
         song = song.overlay(dokodoko, position=t)
-
-#doko = AudioSegment.silent(duration=1000*20)
-
-#t = 0
-#for x in range(8):
-    #print(t)
-    #doko = doko.overlay(do, position=t)
-    #print(t+(tick/2))
-    #doko = doko.overlay(ko, position=t+(tick/2))
-    #t += tick
-    #doko = doko.overlay(Don, position=t+(tick/2))
-    #t += tick
 
 song.export('song.mp3', 'mp3')
