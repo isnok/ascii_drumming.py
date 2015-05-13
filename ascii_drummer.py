@@ -2,9 +2,9 @@
 """ ascii_drummer.py - drum some ascii!
 
 Usage:
-    ascii_drummer.py [-md] [-c=<INT>] [-o=FILE] [-b=BPM] [PATTERN ...]
+    ascii_drummer.py [-d] [-m=<INT>] [-o=FILE] [-b=BPM] [PATTERN ...]
 
-    Where pattern can consits of these 'sounds':
+    Where PATTERN can consit of these 'sounds':
 
         d - do
         k - ko
@@ -19,8 +19,7 @@ Usage:
 Options:
     -b, --bpm=<BPM>         set tempo to BPM beats per minute [default: 90]
     -o, --output=<FILE>     write song to FILE [default: song.mp3]
-    -m, --metronome         insert metronome clicks
-    -c, --click=<INT>       metronome clicks every INT ticks [default: 4]
+    -m, --metronome=<INT>   insert metronome clicks every INT ticks
     -d, --dondokos          insert backbeat dondokos
 
 Examples:
@@ -121,7 +120,7 @@ if __name__ == '__main__':
 
     # add Metronome
     if args['--metronome']:
-        metronome_interval = int(args['--click'])
+        metronome_interval = int(args['--metronome'])
         print('Inserting metronome clicks every %s ticks.' % metronome_interval)
         for cnt, t in enumerate(tick_times):
             if not (cnt % metronome_interval):
@@ -182,5 +181,7 @@ if __name__ == '__main__':
         out_fmt = out_file.split('.')[-1]
     else:
         out_fmt = 'mp3'
+
+    print('Delivering (as %s) to %s.' % (out_fmt, out_file))
 
     song.export(out_file, out_fmt)
