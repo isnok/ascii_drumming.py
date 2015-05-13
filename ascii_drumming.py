@@ -121,7 +121,7 @@ def play(pattern, bpm=80, metronome=None, dondokos=None):
         dokonko = dokonko - 16
 
 
-    print('Playing song:')
+    print('Assembling song:')
 
     char_accu = ''
     for cnt, tup in enumerate(zip(tick_times, pattern)):

@@ -2,7 +2,7 @@
 """ ascii_drummer.py - drum some ascii!
 
 Usage:
-    ascii_drummer.py [-m=<INT>] [-d=CNT] [-o=FILE] [-b=BPM] [PATTERN ...]
+    ascii_drummer.py [-p] [-m=<INT>] [-d=CNT] [-o=FILE] [-b=BPM] [PATTERN ...]
 
     Where PATTERN can be composed of these 'sounds':
 
@@ -21,18 +21,19 @@ Usage:
 
 Options:
     -b, --bpm=<BPM>         set tempo to BPM beats per minute [default: 90]
-    -o, --output=<FILE>     write song to FILE [default: song.mp3]
+    -o, --output=<FILE>     write song to FILE
     -m, --metronome=<INT>   insert metronome clicks every INT ticks
     -d, --dondokos=<CNT>    insert CNT backbeat dondokos
+    -p, --playback          play assembled pattern
 
 Examples:
     The famous dondoko beat: D.dkD.dkD.dkD.dk ...
 
-    $ ./ascii_drummer.py -m4 D.dkD.dkD.dkD.dk D.dkD.dkD.dkD.dk
+    $ ./ascii_drummer.py -p -m4 D.dkD.dkD.dkD.dk D.dkD.dkD.dkD.dk
 
     The rolling dokonko beat: Dk.kDk.kDk.kDk.k ...
 
-    $ ./ascii_drummer.py -m4 -b 72 Dk.kDk.kDk.kDk.k Dk.kDk.kDk.kDk.k
+    $ ./ascii_drummer.py -p -m4 -b 72 Dk.kDk.kDk.kDk.k Dk.kDk.kDk.kDk.k
 
 """
 
@@ -75,12 +76,18 @@ if __name__ == '__main__':
 
     song = play(pattern, bpm, metronome, dondokos)
 
-    out_file = args['--output']
+    if args['--playback']:
+        print('Playing song.')
+        from pydub import playback
+        playback.play(song)
 
-    if '.' in out_file:
-        out_fmt = out_file.split('.')[-1]
-    else:
-        out_fmt = 'mp3'
+    if args['--output'] is not None:
+        out_file = args['--output']
 
-    print('Delivering (as %s) to %s.' % (out_fmt, out_file))
-    song.export(out_file, out_fmt)
+        if '.' in out_file:
+            out_fmt = out_file.split('.')[-1]
+        else:
+            out_fmt = 'mp3'
+
+        print('Delivering (as %s) to %s.' % (out_fmt, out_file))
+        song.export(out_file, out_fmt)
