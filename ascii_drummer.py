@@ -4,7 +4,7 @@
 Usage:
     ascii_drummer.py [-d] [-m=<INT>] [-o=FILE] [-b=BPM] [PATTERN ...]
 
-    Where PATTERN can consit of these 'sounds':
+    Where PATTERN can be composed of these 'sounds':
 
         d - do
         k - ko
@@ -24,7 +24,12 @@ Options:
 
 Examples:
     The famous dondoko beat: D.dkD.dkD.dkD.dk ...
-    The famous dokonko beat: Dk.kDk.kDk.kDk.k ...
+
+    $ ./ascii_drummer.py -m4 D.dkD.dkD.dkD.dk D.dkD.dkD.dkD.dk
+
+    The rolling dokonko beat: Dk.kDk.kDk.kDk.k ...
+
+    $ ./ascii_drummer.py -m4 -b 72 Dk.kDk.kDk.kDk.k Dk.kDk.kDk.kDk.k
 
 """
 
