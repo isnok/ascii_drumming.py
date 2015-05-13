@@ -2,7 +2,7 @@
 """ ascii_drummer.py - drum some ascii!
 
 Usage:
-    ascii_drummer.py [-d] [-m=<INT>] [-o=FILE] [-b=BPM] [PATTERN ...]
+    ascii_drummer.py [-m=<INT>] [-d=CNT] [-o=FILE] [-b=BPM] [PATTERN ...]
 
     Where PATTERN can be composed of these 'sounds':
 
@@ -20,7 +20,7 @@ Options:
     -b, --bpm=<BPM>         set tempo to BPM beats per minute [default: 90]
     -o, --output=<FILE>     write song to FILE [default: song.mp3]
     -m, --metronome=<INT>   insert metronome clicks every INT ticks
-    -d, --dondokos          insert backbeat dondokos
+    -d, --dondokos=<CNT>    insert CNT backbeat dondokos
 
 Examples:
     The famous dondoko beat: D.dkD.dkD.dkD.dk ...
@@ -112,8 +112,8 @@ if __name__ == '__main__':
     if args['--metronome']:
         beats += METRONOME_EARLY
 
-    DONDOKOS_EARLY = 4
     if args['--dondokos']:
+        DONDOKOS_EARLY = int(args['--dondokos'])
         beats += DONDOKOS_EARLY
 
     ticks = beats * 4
