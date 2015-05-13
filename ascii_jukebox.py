@@ -13,6 +13,7 @@ Options:
     -l, --list              list available songs
 """
 
+from pydub import AudioSegment
 from ascii_drumming import play
 from ascii_drummer import read_pattern
 from glob import glob
@@ -35,15 +36,69 @@ def read_song(stream):
         line = line.strip()
         if not line or line.startswith('#'):
             continue
-        yield line
+        yield line.replace(' ', '')
+
+PADDING = 8
 
 def interpret(file, bpm, metronome, dondokos):
     dirstack = file.split(os.sep)[:-1]
-    pattern = ''
+    song = []
+    now = 0
+
+    def play_voice(name, bpm, metronome, dondokos):
+        global PADDING
+        drum_file = os.sep.join(dirstack + [name]) + '.drum'
+        pattern = read_pattern(open(drum_file))
+        voice = play(pattern, bpm, metronome, dondokos)
+        beats = (((len(pattern) + PADDING - 1) / PADDING) * PADDING) / 4
+        beats = len(pattern) / 4
+        return voice, beats
+
     for line in read_song(open(file)):
-        drum_file = os.sep.join(dirstack + [line]) + '.drum'
-        pattern += read_pattern(open(drum_file))
-    return play(pattern, bpm, metronome, dondokos)
+
+        if ':' in line:
+            key, value = line.split(':')
+            if key == 'bpm':
+                bpm = int(value)
+            elif key == 'metronome':
+                try:
+                    metronome = int(value)
+                except:
+                    metronome = None
+            elif key == 'dondokos':
+                try:
+                    dondokos = int(value)
+                except:
+                    dondokos = None
+            else:
+                print('bad key/value pair:', [key, value])
+            continue
+
+        if '|' in line:
+            voices = []
+            beats = 0
+            for name in [n.strip() for n in line.split('|')]:
+                print(name, end='', flush=True)
+                v, b = play_voice(name, bpm, metronome, dondokos)
+                voices.append(v)
+                beats = max(beats, b)
+            voice = AudioSegment.silent(duration=(60000.0 / bpm)*beats+2000)
+            for v in voices:
+                voice = voice.overlay(v)
+
+        else:
+            voice, beats = play_voice(line, bpm, metronome, dondokos)
+
+        song.append((now, voice))
+        time = beats * (60000.0 / bpm)
+        now += time
+
+
+    master_mix = AudioSegment.silent(duration=now+2000)
+    for when, voice in song:
+        master_mix = master_mix.overlay(voice, position=when)
+
+    return master_mix
 
 def do_song(name, bpm, metronome, dondokos):
 

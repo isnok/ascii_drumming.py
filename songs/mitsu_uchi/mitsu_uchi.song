@@ -1,3 +1,7 @@
+bpm: 74
+dondokos: 0
+metronome: None
+
 mitsu_a
 mitsu_a
 mitsu_b
@@ -5,5 +9,12 @@ mitsu_b
 mitsu_c
 mitsu_c
 mitsu_d
+mitsu_d
+mitsu_zwischen
+
+bpm: 94
+mitsu_a
+mitsu_b
+mitsu_c
 mitsu_d
 mitsu_zwischen

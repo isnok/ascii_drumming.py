@@ -1,23 +1,11 @@
-toki_a
-toki_a
-toki_a
-toki_a
-toki_shime
-toki_b
-toki_b
-toki_b
-toki_shime
-toki_a
-toki_a
-
-toki_a
-toki_a
-toki_shime
-toki_b
-toki_b
-toki_b
-toki_shime
-toki_a
-toki_a
-toki_a
-toki_a
+toki_a     | toki_a     
+toki_a     | toki_a     
+toki_a     | toki_shime 
+toki_a     | toki_b     
+toki_shime | toki_b     
+toki_b     | toki_b     
+toki_b     | toki_shime 
+toki_b     | toki_a     
+toki_shime | toki_a     
+toki_a     | toki_a     
+toki_a     | toki_a     
