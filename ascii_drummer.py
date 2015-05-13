@@ -88,33 +88,19 @@ char_map = {
 
 pause = AudioSegment.silent(duration=0.1)
 
-if __name__ == '__main__':
+def play(pattern, bpm=80, metronome=None, dondokos=None):
 
-    from docopt import docopt
-    args = docopt(__doc__)
-    print(args)
-
-    bpm = int(args['--bpm'])
     tick = 1000 * 60 / float(bpm * 4) # dokodoko = 1 beat = 4 ticks
     print('BPM: %s, tick: %s' % (bpm, tick))
-
-    if args['PATTERN']:
-        pattern = ''.join(args['PATTERN'])
-    else:
-        import sys
-        pattern = sys.stdin.read()
-        pattern = pattern.replace(' ', '').replace('\n', '')
-
-    print('Pattern: %r' % pattern)
 
     beats = (len(pattern)+3) // 4
 
     METRONOME_EARLY = 4
-    if args['--metronome']:
+    if metronome is not None:
         beats += METRONOME_EARLY
 
-    if args['--dondokos']:
-        DONDOKOS_EARLY = int(args['--dondokos'])
+    if dondokos is not None:
+        DONDOKOS_EARLY = dondokos
         beats += DONDOKOS_EARLY
 
     ticks = beats * 4
@@ -125,17 +111,16 @@ if __name__ == '__main__':
     song = AudioSegment.silent(duration=ticks*tick+2)
 
     # add Metronome
-    if args['--metronome']:
-        metronome_interval = int(args['--metronome'])
-        print('Inserting metronome clicks every %s ticks.' % metronome_interval)
+    if metronome is not None:
+        print('Inserting metronome clicks every %s ticks.' % metronome)
         for cnt, t in enumerate(tick_times):
-            if not (cnt % metronome_interval):
+            if not (cnt % metronome):
                 song = song.overlay(click, position=t)
-        tick_times = tick_times[METRONOME_EARLY*metronome_interval:]
+        tick_times = tick_times[METRONOME_EARLY*metronome:]
 
 
     # add dondokos
-    if args['--dondokos']:
+    if dondokos is not None:
         print('Inserting dondokos (%s before start of pattern).' % DONDOKOS_EARLY)
         dondoko = AudioSegment.silent(duration=4*tick+2)
         dondoko = dondoko.overlay(my_sample('shime1.wav'), position=0)
@@ -179,7 +164,37 @@ if __name__ == '__main__':
     if char_accu:
         print(char_accu)
 
-    song = effects.normalize(song)
+    return effects.normalize(song)
+
+
+if __name__ == '__main__':
+
+    from docopt import docopt
+    args = docopt(__doc__)
+    print(args)
+
+    bpm = int(args['--bpm'])
+
+    if args['PATTERN']:
+        pattern = ''.join(args['PATTERN'])
+    else:
+        import sys
+        pattern = sys.stdin.read()
+        pattern = pattern.replace(' ', '').replace('\n', '')
+
+    print('Pattern: %r' % pattern)
+
+    if args['--metronome'] is not None:
+        metronome = int(args['--metronome'])
+    else:
+        metronome = None
+
+    if args['--dondokos'] is not None:
+        dondokos = int(args['--dondokos'])
+    else:
+        dondokos = None
+
+    song = play(pattern, bpm, metronome, dondokos)
 
     out_file = args['--output']
 
@@ -189,5 +204,4 @@ if __name__ == '__main__':
         out_fmt = 'mp3'
 
     print('Delivering (as %s) to %s.' % (out_fmt, out_file))
-
     song.export(out_file, out_fmt)
