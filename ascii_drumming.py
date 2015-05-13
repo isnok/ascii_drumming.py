@@ -80,7 +80,8 @@ def play(pattern, bpm=80, metronome=None, dondokos=None):
 
     tick_times = [ x * tick for x in range(ticks) ]
 
-    song = AudioSegment.silent(duration=ticks*tick+2)
+    # exiftool my_set/* | grep Duration | sort -nr | head -n1
+    song = AudioSegment.silent(duration=(ticks*tick)+2000)
 
     # add Metronome
     if metronome is not None:
