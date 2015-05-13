@@ -43,9 +43,9 @@ import sys
 def read_pattern(stream=sys.stdin):
     pattern = ''
     for line in stream.readlines():
-        if line.strip().startswith('#'):
+        if not line.strip() or line.strip().startswith('#'):
             continue
-        pattern += line[:-1]
+        pattern += line.strip()
     return pattern
 
 
