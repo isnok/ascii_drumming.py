@@ -63,17 +63,18 @@ def my_sample(name, fmt=None):
 
     return AudioSegment.from_file(rel_pos + samples[0], fmt)
 
-do =  my_sample('ko.wav')
-ko =  my_sample('do.wav')
-don = my_sample('kon.wav')
-kon = my_sample('don.wav')
+do =  my_sample('taiko4.wav') - 3
+ko =  my_sample('taiko2.wav') - 3
+don = my_sample('taiko3.wav')
+kon = my_sample('taiko5.wav')
 rim = my_sample('rim.wav') - 12
-sa = effects.speedup(my_sample('sa.wav')[300:], playback_speed=3.5) - 12
+sa = effects.speedup(my_sample('sa.wav')[305:], playback_speed=3.5) - 12
 #sa = effects.speedup(my_sample('sa.wav')[310:800], playback_speed=3.5) - 12
 
-Don = don.overlay(kon)
+Don = my_sample('taiko1.wav')
+#Don = don.overlay(kon)
 
-click = my_sample('click.wav')
+click = my_sample('click.wav') - 12
 
 char_map = {
     'd': do,
@@ -135,11 +136,11 @@ if __name__ == '__main__':
 
     # add dondokos
     if args['--dondokos']:
-        print('Inserting dondokos.')
+        print('Inserting dondokos (%s before start of pattern).' % DONDOKOS_EARLY)
         dondoko = AudioSegment.silent(duration=4*tick+2)
-        dondoko = dondoko.overlay(don, position=0)
-        dondoko = dondoko.overlay(do, position=2*tick)
-        dondoko = dondoko.overlay(ko, position=3*tick)
+        dondoko = dondoko.overlay(my_sample('shime1.wav'), position=0)
+        dondoko = dondoko.overlay(my_sample('shime2.wav') - 6, position=2*tick)
+        dondoko = dondoko.overlay(my_sample('shime3.wav') - 6, position=3*tick)
         dondoko = dondoko - 16
 
         for cnt, t in enumerate(tick_times):
