@@ -76,6 +76,9 @@ if __name__ == '__main__':
 
     song = play(pattern, bpm, metronome, dondokos)
 
+    if not (args['--output'] or args['--playback']):
+        args['--playback'] = True
+
     if args['--playback']:
         print('Playing song.')
         from pydub import playback
