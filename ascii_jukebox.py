@@ -59,7 +59,7 @@ def interpret(file, bpm, metronome, dondokos):
         if ':' in line:
             key, value = line.split(':')
             if key == 'bpm':
-                bpm = int(value)
+                bpm += int(value)
             elif key == 'metronome':
                 try:
                     metronome = int(value)
