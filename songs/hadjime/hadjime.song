@@ -1,23 +1,31 @@
-#hadjime_a
-#hadjime_b
-#hadjime_shime
-#hadjime_a
-#hadjime_b
-#hadjime_shime
-
+hadjime_a
+hadjime_b
 hadjime_shime
-hadjime_shime | hadjime_shime
-hadjime_shime | hadjime_shime | hadjime_shime
-hadjime_a     | hadjime_shime | hadjime_shime
-hadjime_b     | hadjime_a     | hadjime_shime
-hadjime_shime | hadjime_b     | hadjime_a
-hadjime_a     | hadjime_shime | hadjime_b
-hadjime_b     | hadjime_a     | hadjime_shime
-hadjime_shime | hadjime_b     | hadjime_a
-hadjime_a     | hadjime_shime | hadjime_b
-hadjime_b     | hadjime_a     | hadjime_shime
-hadjime_shime | hadjime_b     | hadjime_a
-hadjime_a     | hadjime_shime | hadjime_b
-hadjime_b     | hadjime_shime | hadjime_shime
-hadjime_shime | hadjime_shime | hadjime_shime
-hadjime_shime | hadjime_shime | hadjime_shime
+hadjime_a
+hadjime_b
+hadjime_shime
+hadjime_a
+hadjime_b
+hadjime_shime
+hadjime_a
+hadjime_b
+hadjime_shime
+hadjime_a
+hadjime_ende
+
+#hadjime_shime
+#hadjime_shime | hadjime_shime
+#hadjime_shime | hadjime_shime | hadjime_shime
+#hadjime_a     | hadjime_shime | hadjime_shime
+#hadjime_b     | hadjime_a     | hadjime_shime
+#hadjime_shime | hadjime_b     | hadjime_a
+#hadjime_a     | hadjime_shime | hadjime_b
+#hadjime_b     | hadjime_a     | hadjime_shime
+#hadjime_shime | hadjime_b     | hadjime_a
+#hadjime_a     | hadjime_shime | hadjime_b
+#hadjime_b     | hadjime_a     | hadjime_shime
+#hadjime_shime | hadjime_b     | hadjime_a
+#hadjime_a     | hadjime_shime | hadjime_b
+#hadjime_b     | hadjime_shime | hadjime_shime
+#hadjime_shime | hadjime_shime | hadjime_shime
+#hadjime_shime | hadjime_shime | hadjime_shime

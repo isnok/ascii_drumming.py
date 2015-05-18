@@ -109,9 +109,9 @@ def do_song(name, bpm, metronome, dondokos):
     metro = '' if not metronome else '_metronome'
     ddks = '' if not dondokos else '_%dddks' % dondokos
 
-    out_file = os.sep.join([args['--output'], name, '%s_-_%sbpm%s%s.ogg' % (name, bpm, metro, ddks)])
+    out_file = os.sep.join([args['--output'], name, '%s_-_%sbpm%s%s.mp3' % (name, bpm, metro, ddks)])
     print('Delivering: %s' % out_file)
-    song.export(out_file, 'ogg')
+    song.export(out_file, 'mp3')
 
 
 if __name__ == '__main__':
